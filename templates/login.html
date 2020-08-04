@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block style %}
+	<link rel = "stylesheet" href = "{{url_for('static', filename='style.css')}}">
+{% endblock %}
+
+{% block script %}
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+	localStorage.removeItem('disp_name');
+	document.querySelector('#loginform').onsubmit = function(){
+		var disp_name = document.querySelector('#loginname').value;
+		localStorage.setItem('disp_name',disp_name);
+		let val = localStorage.getItem('disp_name');
+		console.log(disp_name);
+		return true;
+	};
+});
+</script>
+{% endblock %}
+{% block body %}
+<div class="container">
+
+<div class = "left_div">
+	<div class = "left_img">
+		<img src="{{url_for('static',filename='logo.png')}}"><br>
+		<span>FLACK</span>
+	</div>
+</div>
+<div class = "right_div">
+	<div id = "form_div">
+		<span>What should we call you?</span>
+		<form action = "/login" method = "POST" id = "loginform">
+			<input name = "user" type = "text" id = "loginname" autocomplete = "off" placeholder="Display Name"><br>
+			<div class = "message">{{message}}</div>
+			<button>LOGIN</button>
+		</form>
+	</div>
+</div>
+</div>
+
+{% endblock %}

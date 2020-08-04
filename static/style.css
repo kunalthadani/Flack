@@ -1,0 +1,75 @@
+body,html{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+.message{
+	color: red;
+	font-family: helvetica;
+	font-size:12px;
+	margin: 10px 0;
+}
+.left_div{
+width: 50%;
+height: 100%;
+background-color:#5745D8;
+display: flex;
+flex-direction: row;
+justify-content: center;
+	align-items: center;
+}
+
+.left_div img{
+	width: 400px; 
+	height: auto;
+}
+.left_img{
+	text-align: center;
+}
+.left_img span{
+	font-family: Helvetica;
+	font-size: 3em;
+	color: white;
+	font-style: oblique;
+}
+#form_div{
+	text-align: center;
+}
+#form_div input{
+	display: inline-block;
+	border:none;
+	font-size: 1.3em;
+	border-bottom: 1px solid #707070;
+	width:100%;
+	margin-top: 20%;
+	padding: 10px;
+	margin-bottom: 20px;  
+}
+
+#form_div button{
+	border: none;
+	background-color: #5745D8;
+	padding: 10px;
+	color: white;
+	font-family: Roboto;
+	width:50%;
+	border-radius: 20px;
+}
+#form_div span{
+	font-family: helvetica;
+	font-size: 30px;
+	color: #707070;
+}
+
+.right_div{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width:50%;
+	height: 100%;
+}
+.container{
+	display: flex;
+	flex-direction: row; 
+	height: 100%;
+}

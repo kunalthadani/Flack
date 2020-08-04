@@ -1,0 +1,138 @@
+
+.left{
+	height: 100%;
+	display: inline-block;
+	width: 40%;	 
+	/*border: 1px solid black;*/
+}
+#header_left,#header_right{
+	height: 60px;
+	width: calc(100%-10px);
+	background-color: #5745D8;
+	color:white;
+	padding-left: 30px;
+}
+#header_right span{
+	font-family: Helvetica;
+	font-size:1em;
+	line-height: 60px;
+}
+
+.right{
+	display: inline-block;
+	width: 60%;
+	height: 100%;
+	/*border: 1px solid black;*/
+}
+.user-title{
+	padding: 10px;
+	padding-left: 20px; 
+	font-family: Roboto;
+	text-align: center;
+	height: 30px;
+	font-size: 1.2em;
+	width: calc(100%-10px);
+	background-color: #5745D8;
+	color:white;
+}
+.channel_item,.user_item{
+	padding: 10px;
+	padding-left: 20px; 
+	font-family: Helvetica;
+	height: 30px;
+	width: calc(100%-10px);
+	background-color: #958CD9;
+	color:#21128D;
+	/*font-size:1.3em;*/
+}
+.channel_item:hover,.user_item:hover{
+	cursor: pointer;
+}
+#add_div{
+	position: absolute;
+	bottom: 0;
+	height: 120px;
+	background-color: #958CD9;
+	width: 40%;
+	text-align: center;
+}
+
+#send_div{
+	border-left: 1px solid white;
+	position: absolute;
+	bottom: 0;
+	height: 120px;
+	background-color: #958CD9;
+	width: calc(60% - 1px);
+	text-align: center;
+}
+#add_div input, #send_div input{
+	height: 30px;
+	width: 80%;
+	/*max-width: 90%;*/
+	padding-left: 10px;
+	border: none;
+	margin-bottom: 20px; 
+}
+#add_div form, #send_div form{
+	margin: 10px;
+}
+#add_div button, #send_div button{
+	border: none;
+	background-color: #5745D8;
+	color: white;
+	height: 30px;
+	width: 80%;
+	padding: 0 10px; 
+	font-family: Helvetica;
+} 
+.chats{
+	height: calc(100% - 180px);
+	overflow-y:scroll; 
+}
+#channel_list{
+	height: calc(50% - 90px);
+	overflow-y:scroll;
+	background-color: #BAB4E5; 
+}
+#user_list{
+	height: calc(50% - 90px);
+	overflow-y:scroll;
+	background-color: #BAB4E5; 	
+}
+body,html{
+	height: 100%;
+}
+body{
+	display: flex;
+	margin: 0;
+}
+.own_flex_div{
+	display: flex;
+	justify-content: flex-end;
+}
+.msg{
+	margin: 5px;
+	max-width: 500px; 
+	display: table;
+	margin: 10px;
+	padding: 7px 20px; 
+	background-color: #E3E2E6;
+	border-radius: 10px; 
+}
+.own_flex_div .msg{
+	background-color: #DFDCF1;
+}
+.name_span{
+	font-family: Helvetica;
+	font-size: 13px;
+	color:#5745D8;
+}
+.msg_span{
+	font-family: "Segoe UI";
+}
+.time-span{
+	font-family: helvetica;
+	color: grey;
+	font-size: 12px;
+}

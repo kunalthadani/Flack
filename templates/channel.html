@@ -1,0 +1,231 @@
+{% extends "layout.html" %}
+{% block style %}
+<link rel = "stylesheet" href = "{{url_for('static', filename='style1.css')}}">
+{% endblock %}
+{% block script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+<script>
+	function setup_channel(channel){
+		const request = new XMLHttpRequest();
+		request.open('POST','/channel_data');
+		var channel_name_put = localStorage.getItem('channel');
+		console.log(channel_name_put);
+		document.querySelector('#header_right').innerHTML = '<span>' + channel_name_put + '</span>';
+		
+		request.onload = function(){
+			document.querySelector('.right').style.display = 'inline-block';
+			const data = JSON.parse(request.responseText);
+			document.querySelector('.chats').innerHTML = "";
+			for (msg of data.msg){
+				const flex_div = document.createElement('div');
+				if(localStorage.getItem('disp_name') != msg.disp_name)
+					flex_div.className = 'flex_div';
+				else
+					flex_div.className = 'own_flex_div';
+				const div = document.createElement('div');
+				div.className = "msg";
+
+				var name_span = document.createElement('span');
+				name_span.className = "name_span";
+				name_span.innerHTML = msg.disp_name;
+
+				var msg_span = document.createElement('span');
+				msg_span.className = "msg_span";
+				msg_span.innerHTML = msg.msg;
+				var br = document.createElement('br');
+				div.append(name_span);
+				div.append(br);
+				div.append(msg_span);
+				br = document.createElement('br');
+				div.append(br);
+				var time = document.createElement('span');
+				time.innerHTML = msg.time;
+				time.className = "time-span";
+				div.append(time);
+
+				flex_div.append(div);
+				document.querySelector('.chats').append(flex_div);
+			}
+		};
+		const data = new FormData();
+		data.append('channel',channel);
+		request.send(data);
+	};
+	if (!localStorage.getItem('disp_name'))
+		window.location.href = '/login';
+	document.addEventListener('DOMContentLoaded',function(){
+		document.querySelectorAll('.channel_item').forEach(function(button){
+			button.addEventListener('click',function(){
+				if (!localStorage.getItem('channel') || localStorage.getItem('channel') != button.dataset.channel){
+					localStorage.setItem('channel',button.dataset.channel);
+					console.log('Selected Channel' + button.dataset.channel);
+					setup_channel(button.dataset.channel);
+				}
+			});
+		});
+
+		if(localStorage.getItem('channel')){
+			var current_channel = localStorage.getItem('channel');
+			setup_channel(current_channel);
+		}
+		else{
+			document.querySelector('.right').style.display = 'none';
+		}
+		document.querySelector('#add_form').onsubmit = function(){a
+			const channel_name = document.querySelector('#add_input').value;
+			const request = new XMLHttpRequest();
+			request.open('POST','/channel_add');
+			request.onload = function(){
+				const data = JSON.parse(request.responseText);
+				added_channel = document.createElement('div');
+				added_channel.addEventListener('click',function(){
+					if (!localStorage.getItem('channel') || localStorage.getItem('channel') != channel_name){
+						localStorage.setItem('channel',channel_name);
+						console.log('Selected Channel' + channel_name);
+						setup_channel(channel_name);
+					}
+				});
+				added_channel.innerHTML = data.channel;
+				added_channel.className = "channel_item";
+				document.querySelector('#channel_list').append(added_channel);
+			};
+			const data = new FormData();
+			data.append('name',channel_name);
+			request.send(data);
+			return false;
+		};
+
+		
+		var socket = io.connect(location.protocol+'//'+document.domain+':'+location.port);
+		socket.on('connect',function(){
+			// ping
+			document.querySelectorAll('.user_item').forEach(function(button){
+				button.addEventListener('click',function(){
+					console.log(button);
+					socket.emit('ping user',{
+						'receiver': button.dataset.user
+					});
+				});
+			})
+			
+			// main
+			document.querySelector('#add_form').onsubmit = function(){
+				const adding_name = document.querySelector('#add_input').value;
+				if(adding_name == '')
+					return false;
+				socket.emit('add channel',{
+					'name':adding_name
+				});
+				document.querySelector('#add_input').value='';
+				return false;
+			};
+			document.querySelector('#message_form').onsubmit = function(){
+				const msg = document.querySelector('#message_input').value;
+				console.log('1st:' + msg);
+				if(msg == '')
+					return false;
+				socket.emit('send message',{
+					'msg':msg,
+					'channel':localStorage.getItem('channel'),
+					'disp_name':localStorage.getItem('disp_name')
+				});
+				document.querySelector('#message_input').value = '';
+				return false;
+			};
+		});
+		socket.on('send ping',function(data){
+			console.log('HI');
+			if (data.receiver == localStorage.getItem('disp_name'))
+				alert(data.sender + " says Hi!");
+		});
+
+		socket.on('receive message',function(data){
+			if(data.channel == localStorage.getItem('channel')){
+				console.log('sender' + data.disp_name);
+				console.log('2nd:' + data.msg);
+				const flex_div = document.createElement('div');
+				if(localStorage.getItem('disp_name') != data.disp_name)
+					flex_div.className = 'flex_div';
+				else
+					flex_div.className = 'own_flex_div';
+				const div = document.createElement('div');
+				div.className = "msg";
+
+				var name_span = document.createElement('span');
+				name_span.className = "name_span";
+				name_span.innerHTML = data.disp_name;
+
+				var msg_span = document.createElement('span');
+				msg_span.className = "msg_span";
+				msg_span.innerHTML = data.msg;
+
+				var br = document.createElement('br');
+				div.append(name_span);
+				div.append(br);
+				div.append(msg_span);
+				br =  document.createElement('br');
+				div.append(br);
+				var time = document.createElement('span');
+				time.innerHTML = data.time;
+				time.className = "time-span";
+				div.append(time);
+				flex_div.append(div);
+				document.querySelector('.chats').append(flex_div);
+			}
+		});
+		socket.on('put channel',function(data){
+			if (data.success == true){
+				var div = document.createElement('div');
+				div.className = 'channel_item';
+				div.dataset['channel'] = data.name;
+				div.innerHTML = data.name;
+				div.addEventListener('click',function(){
+					if (!localStorage.getItem('channel') || localStorage.getItem('channel') != div.dataset.channel){
+						localStorage.setItem('channel',div.dataset.channel);
+						console.log('Selected Channel' + div.dataset.channel);
+						setup_channel(div.dataset.channel);
+					}
+				});
+				document.querySelector('#channel_list').append(div);
+			}
+		});
+	});
+</script>
+{% endblock %}
+{% block body %} 
+<div class = "left">
+	<div id="header_left">
+	</div>
+	<div id = "channel_list">
+		{% for i in channels %}
+		<div class = "channel_item" data-channel = "{{i}}">{{i}}</div>
+		{% endfor %}
+	</div>
+	<div id = "user_list">
+		<div class = "user-title">Say 'Hi!'</div>
+		{% for user in users %}
+		<div class = "user_item" data-user = "{{user}}">{{user}}</div>
+		{% endfor %}
+	</div>
+	<div id="add_div">
+	<form id = "add_form">
+		<input name = "name" type = "text" placeholder="Add Channel" id = "add_input" autocomplete="off">
+		<button> ADD </button>
+	</form>
+</div>
+</div>
+
+
+<div class = "right">
+		<div id = "header_right"></div>
+		<div class = "chats">
+		</div>
+		<div id = "send_div">
+			<form id = "message_form">
+				<input type = "text" id = "message_input" name = "message" placeholder="Send message" autocomplete="off" autofocus>
+				<button>SEND</button>
+			</form>
+		</div>
+</div>
+{% endblock %}
